@@ -60,7 +60,7 @@ def return_wether( data):
     response = requests.get(url,params=params)
     temp = response.json()['hourly']['temperature_2m']
     average_temperature = statistics.mean(response.json()['hourly']['temperature_2m'])
-    return f'средняя температура сегодня {int(average_temperature)}'
+    return f'avg temperature today is {int(average_temperature)}'
 # print(return_wether(get_city_info('Moscow')))
 
 def show_weather_to_user(request):
