@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Метаданные и подключение Bootstrap -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Weather App</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="col-md-6">
+            <form method="POST">
+                {% csrf_token %}
+
+                {{ form }}
+                {% if main_data %}
+                    {{ main_data }}
+                {% endif %}
+                <div class="form-group">
+                    <button class="btn btn-primary mt-3 w-100" type="submit">Input</button>
+                </div>
+                <div class="mt-2 mb-2">
+                    <small>
+                        <a class="text-decoration-none text-danger" href="#"></a>
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

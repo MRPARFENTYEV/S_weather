@@ -9,7 +9,7 @@ from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
 from datetime import datetime
 import pytz
-from forms import InputCityForm
+from weather_info.forms import InputCityForm
 def get_city_info(city_name): # выводит город, широту, долготу, временную зону
 
     geolocator = Nominatim(user_agent="city_info")
@@ -41,8 +41,8 @@ def get_external_ip(): # Вычислить ip
     return external_ip
 
 
-def return_wether(data):
-    form = InputCityForm(request.POST)# измена
+def return_wether( data):
+
     cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
     retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
     openmeteo = openmeteo_requests.Client(session = retry_session)
@@ -60,5 +60,29 @@ def return_wether(data):
     response = requests.get(url,params=params)
     temp = response.json()['hourly']['temperature_2m']
     average_temperature = statistics.mean(response.json()['hourly']['temperature_2m'])
-    return int(average_temperature)
-print(return_wether(get_city_info('Moscow')))
+    return f'средняя температура сегодня {int(average_temperature)}'
+# print(return_wether(get_city_info('Moscow')))
+
+def show_weather_to_user(request):
+    form = InputCityForm(request.POST)# измена
+
+
+    if form.is_valid():
+        main_data = {'ip': get_external_ip()}
+        data = form.cleaned_data
+
+        avg_temperature =  return_wether(get_city_info(data['city']))
+        # data[return_wether(get_city_info(data['city']))]
+        main_data['city']=data['city']
+        main_data['weather'] = str(avg_temperature)
+        print(main_data)
+        # print(return_wether(get_city_info(data['city'])))
+
+
+        return render(request, 'show_weather_result.html', {'main_data': main_data})
+    else:
+        form = InputCityForm()
+        context = {'form': form,}
+        return render(request, 'show_weather.html', context)
+
+
